@@ -39,11 +39,12 @@ def main():
 
         st.write("All scraping done!")
 
-        # Download button
-        if st.button("Download All CSVs"):
-            with st.spinner("Downloading..."):
-                for df in dataframes:
-                    st.download_button(label="Download CSV", data=df.to_csv(), file_name=f"{df['Brand'].iloc[0]}.csv", key=df['Brand'].iloc[0])
+        # Display download links for each CSV
+        for df in dataframes:
+            csv = df.to_csv(index=False).encode('utf-8')
+            b64 = base64.b64encode(csv).decode()
+            href = f'<a href="data:file/csv;base64,{b64}" download="{df["Brand"].iloc[0]}.csv">Download CSV</a>'
+            st.markdown(href, unsafe_allow_html=True)
 
 if __name__ == "__main__":
     main()
