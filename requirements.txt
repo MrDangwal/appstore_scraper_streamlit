@@ -1,0 +1,6 @@
+requests
+datetime
+streamlit
+pandas
+app_store_scraper
+urllib3
