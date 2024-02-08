@@ -5,10 +5,10 @@ from datetime import datetime
 import base64
 
 # Define the function to get App Store reviews
-def getAppStoreReviews(link):
+def getAppStoreReviews(link, after_date, country):
     app_name = link.split("/")[-2]
-    revolut = AppStore(country="US", app_name=app_name)
-    revolut.review(after=datetime(2000, 1, 1))
+    revolut = AppStore(country=country, app_name=app_name)
+    revolut.review(after=after_date)
     revolut.review()
     df = pd.DataFrame(revolut.reviews)
     df['Brand'] = app_name
@@ -21,6 +21,12 @@ def getAppStoreReviews(link):
 def main():
     st.title("App Store Reviews Scraper")
 
+    # Input for after date
+    after_date = st.date_input("Select after date")
+
+    # Input for country
+    country = st.text_input("Enter country code (e.g., US)")
+
     # Input for app links
     app_links_text = st.text_area("Enter app links (one link per line)")
 
@@ -30,7 +36,7 @@ def main():
 
         for link in app_links:
             if link:
-                dataframes.append(getAppStoreReviews(link))
+                dataframes.append(getAppStoreReviews(link, after_date, country))
 
         st.write("All scraping done!")
 
