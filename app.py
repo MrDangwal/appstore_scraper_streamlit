@@ -4,11 +4,11 @@ import pandas as pd
 from datetime import datetime
 import base64
 
-# Define the function to get App Store reviews
-def getAppStoreReviews(link, after_date, country):
+
+def getAppStoreReviews(link):
     app_name = link.split("/")[-2]
-    revolut = AppStore(country=country, app_name=app_name)
-    revolut.review(after=after_date)
+    revolut = AppStore(country="US", app_name=app_name)
+    revolut.review(after=datetime(2000, 1, 1))
     revolut.review()
     df = pd.DataFrame(revolut.reviews)
     df['Brand'] = app_name
@@ -17,17 +17,11 @@ def getAppStoreReviews(link, after_date, country):
     st.write(f"Scraping done for {app_name}")
     return df
 
-# Streamlit UI
+#Streamlit UI
 def main():
     st.title("App Store Reviews Scraper")
 
-    # Input for after date
-    after_date = st.date_input("Select after date")
-
-    # Input for country
-    country = st.text_input("Enter country code (e.g., US)")
-
-    # Input for app links
+    #Input for app links
     app_links_text = st.text_area("Enter app links (one link per line)")
 
     if st.button("Scrape Reviews"):
@@ -36,12 +30,11 @@ def main():
 
         for link in app_links:
             if link:
-                dataframes.append(getAppStoreReviews(link, after_date, country))
+                dataframes.append(getAppStoreReviews(link))
 
         st.write("All scraping done!")
 
-        for idx, df in enumerate(dataframes):
-            # Display download button for each CSV
+        for idx, df in enumerate(dataframes):  
             csv = df.to_csv(index=False).encode('utf-8')
             b64 = base64.b64encode(csv).decode()
             href = f'<a href="data:file/csv;base64,{b64}" download="{df["Brand"].iloc[0]}.csv">Download CSV</a>'
