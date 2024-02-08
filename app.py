@@ -32,11 +32,18 @@ def main():
     app_links = app_links_text.split("\n")
 
     if st.button("Scrape Reviews"):
+        dataframes = []
         for link in app_links:
             if link:
-                getAppStoreReviews(link, after_date, country)
+                dataframes.append(getAppStoreReviews(link, after_date, country))
 
         st.write("All scraping done!")
+
+        # Download button
+        if st.button("Download All CSVs"):
+            with st.spinner("Downloading..."):
+                for df in dataframes:
+                    st.download_button(label="Download CSV", data=df.to_csv(), file_name=f"{df['Brand'].iloc[0]}.csv", key=df['Brand'].iloc[0])
 
 if __name__ == "__main__":
     main()
